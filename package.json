@@ -6,12 +6,14 @@
   "description": "Dungeon Duel / D4X: deterministic overlord-vs-overlord tactical dungeon extraction game.",
   "scripts": {
     "dev": "tsx src/index.ts",
+    "dev:browser": "vite dev --config vite.config.browser.ts",
+    "dev:tauri": "vite dev --config vite.config.tauri.ts",
     "build": "tsc -p tsconfig.json",
+    "build:browser": "vite build --config vite.config.browser.ts",
+    "build:tauri": "vite build --config vite.config.tauri.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "start": "node dist/index.js",
-    "dev:tauri": "vite dev --config vite.config.tauri.ts",
-    "build:tauri": "vite build --config vite.config.tauri.ts",
     "bootstrap:tauri": "node src-tauri/scripts/bootstrap-tauri.ts"
   },
   "engines": {

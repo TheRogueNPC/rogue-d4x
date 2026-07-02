@@ -32,6 +32,40 @@ hud.style.fontSize = '14px';
 hud.style.color = '#ddd';
 document.body.appendChild(hud);
 
+// UI enhancements: helper to create styled buttons and a controls bar
+function createButton(label: string, onClick: () => void): HTMLButtonElement {
+  const btn = document.createElement('button');
+  btn.textContent = label;
+  btn.onclick = onClick;
+  btn.style.fontFamily = 'monospace';
+  btn.style.fontSize = '14px';
+  btn.style.padding = '4px 8px';
+  btn.style.backgroundColor = '#333';
+  btn.style.color = '#eee';
+  btn.style.border = '1px solid #555';
+  btn.style.borderRadius = '3px';
+  btn.style.cursor = 'pointer';
+  btn.addEventListener('mouseenter', () => {
+    btn.style.backgroundColor = '#444';
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.backgroundColor = '#333';
+  });
+  return btn;
+}
+const controls = document.createElement('div');
+controls.style.maxWidth = `${canvas.width}px`;
+controls.style.margin = '8px auto';
+controls.style.display = 'flex';
+controls.style.justifyContent = 'center';
+controls.style.gap = '8px';
+document.body.appendChild(controls);
+
+const rerollBtn = createButton('Reroll (R)', () => rerollDungeon());
+const themeBtn = createButton('Next Theme (T)', () => cycleTheme());
+controls.appendChild(rerollBtn);
+controls.appendChild(themeBtn);
+
 let themeId: DungeonThemeId = 'obsidian';
 let layout: DungeonLayout = createDungeonLayout({ width: WIDTH, height: HEIGHT, themeId });
 let player = { ...layout.spawn };

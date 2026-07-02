@@ -1,8 +1,6 @@
 // src/index.ts
-// CLI smoke runner: executes the testable D4X loop and prints every terminal frame.
+// Terminal entrypoint: launches the playable Rogue D4X CLI loop.
 
-import { formatLoopFrames, runDummyRound } from './game-loop.js';
+import { runInteractiveTerminal } from './terminal/playable-terminal.js';
 
-const result = runDummyRound();
-
-console.log(formatLoopFrames(result));
+await runInteractiveTerminal();

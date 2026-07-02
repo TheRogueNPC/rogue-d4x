@@ -20,7 +20,8 @@
     "src/frontend/**/*.ts",
     "tests/**/*.ts",
     "vitest.config.ts",
+    "vite.config.browser.ts",
     "vite.config.tauri.ts"
   ],
-  "exclude": ["dist", "node_modules", "Graphics Research- and foundation code"]
+  "exclude": ["dist", "dist-browser", "node_modules", "Graphics Research- and foundation code"]
 }

@@ -14,6 +14,12 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "vitest.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src-tauri/**/*.ts",
+    "tests/**/*.ts",
+    "vitest.config.ts",
+    "vite.config.tauri.ts"
+  ],
   "exclude": ["dist", "node_modules", "Graphics Research- and foundation code"]
 }

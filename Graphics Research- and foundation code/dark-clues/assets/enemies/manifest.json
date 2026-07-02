@@ -1,0 +1,6 @@
+[
+  { "name": "Phantom", "file": "phantom.json" },
+  { "name": "Spider", "file": "spider.json" },
+  { "name": "Vampire", "file": "vampire.json" },
+  { "name": "Golem", "file": "golem.json" }
+]

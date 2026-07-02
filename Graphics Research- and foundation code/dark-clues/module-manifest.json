@@ -1,0 +1,113 @@
+{
+  "modules/core/game.js": [
+    "com.watabou.sevendrl.Main",
+    "com.watabou.sevendrl.SevenDRL",
+    "com.watabou.sevendrl.Plan",
+    "com.watabou.sevendrl.PlanView",
+    "com.watabou.sevendrl.Room",
+    "com.watabou.sevendrl.Door",
+    "com.watabou.sevendrl.Grid",
+    "com.watabou.sevendrl.Node",
+    "com.watabou.sevendrl.Edge",
+    "com.watabou.sevendrl.Dir",
+    "com.watabou.sevendrl.ChainUtils",
+    "com.watabou.sevendrl.ActionCard",
+    "com.watabou.sevendrl.ActionDeck"
+  ],
+  "modules/core/characters.js": [
+    "com.watabou.sevendrl.characters.Character",
+    "com.watabou.sevendrl.characters.Hero",
+    "com.watabou.sevendrl.characters.Mob",
+    "com.watabou.sevendrl.characters.Hunter",
+    "com.watabou.sevendrl.characters.Ambusher",
+    "com.watabou.sevendrl.characters.Boss",
+    "com.watabou.sevendrl.characters.Spawn",
+    "com.watabou.sevendrl.characters.Clue",
+    "com.watabou.sevendrl.characters.Ambush",
+    "com.watabou.sevendrl.characters.Wanderer"
+  ],
+  "modules/core/actions.js": [
+    "com.watabou.sevendrl.characters.Action",
+    "com.watabou.sevendrl.characters.ActionMove",
+    "com.watabou.sevendrl.characters.ActionEngage",
+    "com.watabou.sevendrl.characters.ActionAttack",
+    "com.watabou.sevendrl.characters.ActionCollect",
+    "com.watabou.sevendrl.characters.ActionWait"
+  ],
+  "modules/core/states.js": [
+    "com.watabou.sevendrl.characters.State",
+    "com.watabou.sevendrl.characters.StateIdle",
+    "com.watabou.sevendrl.characters.StateWandering",
+    "com.watabou.sevendrl.characters.StateChasing"
+  ],
+  "modules/core/pathfinding.js": [
+    "com.watabou.sevendrl.Pathfinder"
+  ],
+  "modules/core/scenes.js": [
+    "com.watabou.sevendrl.scenes.TextScene",
+    "com.watabou.sevendrl.scenes.DeathScene",
+    "com.watabou.sevendrl.scenes.GameScene",
+    "com.watabou.sevendrl.scenes.TitleScene",
+    "com.watabou.sevendrl.scenes.VictoryScene"
+  ],
+  "modules/core/visuals.js": [
+    "com.watabou.sevendrl.visuals.AsciiSprite",
+    "com.watabou.sevendrl.visuals.CharacterSprite",
+    "com.watabou.sevendrl.visuals.CardIndicator",
+    "com.watabou.sevendrl.visuals.StatePin",
+    "com.watabou.sevendrl.visuals.CenteredText",
+    "com.watabou.sevendrl.visuals.Fader",
+    "com.watabou.sevendrl.visuals.Indicator",
+    "com.watabou.sevendrl.visuals.Unit",
+    "com.watabou.sevendrl.visuals.Toast",
+    "com.watabou.sevendrl.visuals.Window"
+  ],
+  "modules/core/audio.js": [
+    "com.watabou.sevendrl.Sounds"
+  ],
+  "modules/core/style.js": [
+    "com.watabou.sevendrl.Style"
+  ],
+  "modules/tracery/tracery.js": [
+    "com.watabou.tracery.RuleSelector",
+    "com.watabou.tracery.DeckRuleSelector",
+    "com.watabou.tracery.Symbol",
+    "com.watabou.tracery.ExtSymbol",
+    "com.watabou.tracery.Grammar",
+    "com.watabou.tracery.ModsEngBasic",
+    "com.watabou.tracery.NodeAction",
+    "com.watabou.tracery.RuleSet",
+    "com.watabou.tracery.Tracery",
+    "com.watabou.tracery.TraceryNode"
+  ],
+  "modules/watabou/utils.js": [
+    "com.watabou.utils.ArrayExtender",
+    "com.watabou.utils.DisplayObjectExtender",
+    "com.watabou.utils.GrammarExtender",
+    "com.watabou.utils.GraphicsExtender",
+    "com.watabou.utils.MathUtils",
+    "com.watabou.utils.PointExtender",
+    "com.watabou.utils.Random",
+    "com.watabou.utils.StringUtils",
+    "com.watabou.utils.Updater",
+    "com.watabou.utils.RecurringEventDispatcher",
+    "com.watabou.utils._Updater.TimerEventDispatcher",
+    "com.watabou.utils._Updater.FrameEventDispatcher",
+    "com.watabou.utils._Updater.RendererDispatcher"
+  ],
+  "modules/watabou/geom.js": [
+    "com.watabou.geom.Color",
+    "com.watabou.geom.GeomUtils",
+    "com.watabou.geom.Rect"
+  ],
+  "modules/watabou/processes.js": [
+    "com.watabou.processes.Process",
+    "com.watabou.processes.Sequence",
+    "com.watabou.processes.Tweener"
+  ],
+  "modules/watabou/engine.js": [
+    "com.watabou.coogee.Game",
+    "com.watabou.coogee.Scene",
+    "com.watabou.coogee.ui.utils.Text"
+  ]
+}

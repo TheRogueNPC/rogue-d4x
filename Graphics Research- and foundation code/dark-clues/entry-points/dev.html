@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues - Development Entry Point</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <style>
+        html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#000; }
+        #openfl-content { width:100%; height:100%; }
+    </style>
+</head>
+<body>
+    <div id="openfl-content"></div>
+
+    <!-- Load Haxe runtime (MUST be before modules) -->
+    <script src="../src/.LOCKED/runtime/base.js"></script>
+
+    <!-- MP3 compatibility patch -->
+    <script src="../mp3_patch.js"></script>
+
+    <!-- Load game modules with hot-reload -->
+    <script type="module">
+        // Import main game modules
+        import "../src/modules/index.js";
+
+        // Wait for lime, then boot
+        function bootGame() {
+            if (typeof lime !== 'undefined') {
+                console.log('✓ Lime loaded, booting game...');
+                try {
+                    lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+                    console.log('✓ Game initialized');
+                } catch (e) {
+                    console.error('✗ Game init failed:', e);
+                }
+                return;
+            }
+            setTimeout(bootGame, 100);
+        }
+
+        setTimeout(bootGame, 500);
+
+        // Dev console helpers
+        window.devReload = function() {
+            location.reload();
+        };
+    </script>
+</body>
+</html>

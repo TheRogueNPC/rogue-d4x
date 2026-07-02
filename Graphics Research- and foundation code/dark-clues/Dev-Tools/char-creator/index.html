@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues — Character Creator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background:#111122; color:#ddd; font-family:"Share Tech Regular",monospace; padding:16px; }
+        h1 { font-size:18px; color:#ddd; margin-bottom:8px; letter-spacing:3px; }
+        h2 { font-size:13px; color:#0ff; margin:8px 0 4px; letter-spacing:1px; }
+        .tab-bar { display:flex; gap:2px; margin-bottom:12px; }
+        .tab-bar .tab {
+            background:#111122; color:#888; border:1px solid #555; border-bottom:none;
+            font-family:"Share Tech Regular",monospace; font-size:12px; padding:6px 14px;
+            cursor:pointer; letter-spacing:1px;
+        }
+        .tab-bar .tab.active { color:#0ff; border-color:#0ff; background:#1a1a33; }
+        .tab-bar .tab:hover:not(.active) { border-color:#ddd; color:#ddd; }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+        #app { display:flex; gap:16px; flex-wrap:wrap; }
+        #form-col { flex:0 0 360px; }
+        #preview-col { flex:1; min-width:300px; }
+        #preview-col h2 { margin-top:0; }
+        .field { display:flex; align-items:center; margin:6px 0; }
+        .field label { color:#888; width:90px; font-size:12px; flex-shrink:0; }
+        .field input[type=text] {
+            background:#111122; color:#ddd; border:1px solid #555;
+            font-family:"Share Tech Regular",monospace; font-size:12px; padding:4px 6px; flex:1;
+        }
+        .field input[type=text]:focus { border-color:#ddd; outline:none; }
+        .field select {
+            background:#111122; color:#ddd; border:1px solid #555;
+            font-family:"Share Tech Regular",monospace; font-size:12px; padding:4px 6px; flex:1;
+        }
+        .field select:focus { outline:none; border-color:#ddd; }
+        .stat-group { display:flex; gap:4px; align-items:center; }
+        .stat-group button {
+            background:#111122; color:#ddd; border:1px solid #555;
+            cursor:pointer; font-size:13px; width:24px; height:24px;
+            font-family:"Share Tech Regular",monospace;
+        }
+        .stat-group button:hover { border-color:#ddd; }
+        .stat-group .val { color:#0ff; width:24px; text-align:center; font-weight:bold; font-size:14px; }
+        .stat-group .val.enemy-dmg { color:#f44; }
+        hr { border-color:#333; margin:10px 0; }
+        .toolbar { display:flex; gap:4px; flex-wrap:wrap; margin:6px 0; }
+        .toolbar button {
+            background:#111122; color:#ddd; border:1px solid #555;
+            font-family:"Share Tech Regular",monospace; font-size:11px; padding:5px 10px; cursor:pointer;
+        }
+        .toolbar button:hover { border-color:#ddd; }
+        .toolbar button.danger:hover { border-color:#f44; color:#f44; }
+        .toolbar button.primary { border-color:#0ff; color:#0ff; }
+        .toolbar button.primary:hover { background:#0ff; color:#000; }
+        #drop-zone {
+            border:2px dashed #555; padding:24px;
+            text-align:center; color:#888; font-size:12px; cursor:pointer;
+            transition:background 0.2s, border-color 0.2s;
+            min-height:80px; display:flex; flex-direction:column;
+            justify-content:center; align-items:center; gap:6px;
+        }
+        #drop-zone.dragover { background:#1a1a33; border-color:#ddd; color:#ddd; }
+        #drop-zone.has-files { border-style:solid; background:#1a1a33; }
+        #visual-list { margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; }
+        .visual-item {
+            background:#1a1a2e; border:1px solid #333; padding:6px;
+            position:relative; width:100px; text-align:center;
+        }
+        .visual-item img { max-width:80px; max-height:80px; display:block; margin:0 auto; }
+        .visual-item .vname { font-size:10px; color:#888; margin-top:4px; word-break:break-all; }
+        .visual-item .vtype { font-size:9px; color:#555; }
+        .visual-item .vdel {
+            position:absolute; top:2px; right:2px; background:#f44; color:#fff;
+            border:none; cursor:pointer; font-size:10px; width:16px; height:16px;
+            line-height:16px; text-align:center;
+        }
+        .visual-item .vdel:hover { background:#c00; }
+        .visual-item.json-item { width:100%; max-width:300px; }
+        .visual-item.json-item pre {
+            font-size:9px; color:#ddd; max-height:80px; overflow:hidden;
+            text-align:left; white-space:pre-wrap; word-break:break-all;
+        }
+        #preview-canvas {
+            background:#1a1a2e; border:1px solid #555;
+            width:100%; min-height:240px; display:flex;
+            justify-content:center; align-items:center;
+            flex-wrap:wrap; gap:12px; padding:12px;
+        }
+        #preview-canvas .char-card, #preview-canvas .enemy-card {
+            background:#111122; border:2px solid #555; padding:16px;
+            text-align:center; min-width:160px;
+        }
+        #preview-canvas .enemy-card { border-color:#822; }
+        #preview-canvas .char-card .cname, #preview-canvas .enemy-card .cname { font-size:18px; color:#ddd; letter-spacing:2px; margin-bottom:4px; }
+        #preview-canvas .char-card .cstats, #preview-canvas .enemy-card .cstats { font-size:12px; color:#888; }
+        #preview-canvas .char-card .cpreview, #preview-canvas .enemy-card .cpreview { margin-top:8px; }
+        #preview-canvas .char-card .cpreview img, #preview-canvas .enemy-card .cpreview img { max-width:120px; max-height:120px; }
+        #preview-canvas .enemy-card .estats { font-size:11px; color:#f88; margin-top:2px; }
+        #preview-canvas .enemy-card .estate { font-size:10px; color:#888; }
+        #status { color:#888; font-size:11px; margin-top:4px; min-height:18px; }
+        #export-area { display:none; margin-top:8px; }
+        #export-area textarea {
+            width:100%; height:200px; background:#111122; color:#ddd;
+            border:1px solid #555; font-family:"Share Tech Regular",monospace; font-size:11px; padding:8px;
+        }
+        #glyph-grid {
+            display:flex; flex-wrap:wrap; gap:2px; justify-content:center;
+            margin:6px 0; max-height:96px; overflow-y:auto;
+        }
+        #glyph-grid .glyph-cell {
+            width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+            background:#111122; border:1px solid #333; cursor:pointer;
+            font-family:"Share Tech Regular",monospace; font-size:14px; color:#ddd;
+            transition:border-color 0.1s, background 0.1s;
+        }
+        #glyph-grid .glyph-cell:hover { border-color:#ddd; background:#1a1a33; }
+        #glyph-grid .glyph-cell.selected { border-color:#0ff; background:#0ff1; color:#0ff; }
+        .enemy-data-fields { display:none; margin-top:8px; border-top:1px solid #333; padding-top:8px; }
+        .enemy-data-fields.visible { display:block; }
+        .field-hint { font-size:10px; color:#555; margin:-4px 0 6px 90px; }
+        .enemy-state-select { background:#111122; color:#ddd; border:1px solid #555; font-family:"Share Tech Regular",monospace; font-size:12px; padding:4px 6px; flex:1; }
+    </style>
+</head>
+<body>
+    <div style="margin-bottom:10px;font-size:12px;">
+        <span style="color:#ddd;">◈ DARK CLUES</span>
+        <span style="color:#555;">|</span>
+        <a href="../level-creator/index.html" style="color:#888;text-decoration:none;">Level Creator</a>
+        <span style="color:#555;">|</span>
+        <a href="../char-creator/index.html" style="color:#0ff;text-decoration:none;">Character Creator</a>
+    </div>
+    <h1>◈ DARK CLUES — CHARACTER CREATOR</h1>
+    <div class="tab-bar">
+        <button class="tab active" data-tab="character" onclick="switchTab('character')">Character</button>
+        <button class="tab" data-tab="enemy" onclick="switchTab('enemy')">Enemy</button>
+    </div>
+    <div id="app">
+        <div id="form-col">
+
+            <!-- Character Tab -->
+            <div class="tab-content active" id="tab-character">
+                <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="char-name" value="Detective" maxlength="20">
+                </div>
+                <div class="field">
+                    <label>Bonus HP</label>
+                    <div class="stat-group">
+                        <button onclick="charStat('hp',-1)">−</button>
+                        <span class="val" id="char-hp">0</span>
+                        <button onclick="charStat('hp',1)">+</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Bonus Stock</label>
+                    <div class="stat-group">
+                        <button onclick="charStat('stock',-1)">−</button>
+                        <span class="val" id="char-stock">0</span>
+                        <button onclick="charStat('stock',1)">+</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Theme</label>
+                    <select id="char-theme">
+                        <option value="default">Default</option>
+                        <option value="amber">Amber</option>
+                        <option value="teal">Teal</option>
+                        <option value="crimson">Crimson</option>
+                    </select>
+                </div>
+                <div style="font-size:11px;color:#888;margin:6px 0 2px;text-align:left;">Map Symbol</div>
+                <div id="glyph-grid-ch" class="glyph-grid"></div>
+                <hr>
+                <h2>Visuals</h2>
+                <div style="font-size:11px;color:#555;margin-bottom:6px;">
+                    Upload sprite images (PNG, SVG) or sprite data (JSON)
+                </div>
+                <div id="drop-zone" class="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <span>Drop files here or click to browse</span>
+                    <span style="font-size:10px;color:#555;">SVG · PNG · JSON</span>
+                </div>
+                <input type="file" id="file-input" accept=".svg,.png,.json" multiple style="display:none" onchange="handleFiles(this.files)">
+                <div id="visual-list"></div>
+                <hr>
+                <div class="toolbar">
+                    <button class="primary" onclick="exportCharacter()">Export</button>
+                    <button onclick="document.getElementById('import-file').click()">Import</button>
+                    <button onclick="resetCharacter()">Reset</button>
+                    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importCharacterFile(event)">
+                </div>
+                <div id="status">Ready — configure your character and add visuals</div>
+            </div>
+
+            <!-- Enemy Tab -->
+            <div class="tab-content" id="tab-enemy">
+                <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="enemy-name" value="Phantom" maxlength="20">
+                </div>
+                <div class="field">
+                    <label>HP</label>
+                    <div class="stat-group">
+                        <button onclick="enemyStat('hp',-1)">−</button>
+                        <span class="val" id="enemy-hp">3</span>
+                        <button onclick="enemyStat('hp',1)">+</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Damage</label>
+                    <div class="stat-group">
+                        <button onclick="enemyStat('dmg',-1)">−</button>
+                        <span class="val enemy-dmg" id="enemy-dmg">2</span>
+                        <button onclick="enemyStat('dmg',1)">+</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Behavior</label>
+                    <select id="enemy-state" class="enemy-state-select">
+                        <option value="wandering">Wandering</option>
+                        <option value="chasing">Chasing</option>
+                        <option value="stationary">Stationary</option>
+                        <option value="patrol">Patrol</option>
+                    </select>
+                </div>
+                <div style="font-size:11px;color:#888;margin:6px 0 2px;text-align:left;">Map Symbol</div>
+                <div id="glyph-grid-en" class="glyph-grid"></div>
+                <div class="field-hint">Appearance on the dungeon map</div>
+                <hr>
+                <div class="toolbar" style="margin-top:8px;">
+                    <button class="primary" onclick="exportEnemy()">Export</button>
+                    <button onclick="document.getElementById('import-enemy-file').click()">Import</button>
+                    <button onclick="resetEnemy()">Reset</button>
+                    <input type="file" id="import-enemy-file" accept=".json" style="display:none" onchange="importEnemyFile(event)">
+                    <button onclick="copyEnemyJSON()" id="btn-copy-enemy" style="display:none;">Copy</button>
+                </div>
+                <div id="export-enemy-area" style="display:none;margin-top:8px;">
+                    <textarea id="enemy-json-output" rows="8" style="width:100%;background:#111122;color:#ddd;border:1px solid #555;font-family:Share Tech Regular,monospace;font-size:11px;padding:8px;"></textarea>
+                    <div class="toolbar">
+                        <button onclick="downloadEnemyJSON()">Download</button>
+                        <button onclick="closeEnemyExport()">Close</button>
+                    </div>
+                </div>
+                <div id="status-enemy" style="color:#888;font-size:11px;margin-top:4px;min-height:18px;">Define a new enemy type</div>
+            </div>
+
+            <!-- Shared export area -->
+            <div id="export-area">
+                <h2>Export</h2>
+                <textarea id="json-output" readonly></textarea>
+                <div class="toolbar">
+                    <button onclick="copyJSON()">Copy</button>
+                    <button onclick="downloadJSON()">Download</button>
+                    <button onclick="closeExport()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="preview-col">
+            <h2>Preview</h2>
+            <div id="preview-canvas">
+                <div class="char-card" id="char-preview">
+                    <div class="cname" id="p-name">Detective</div>
+                    <div class="cstats" id="p-stats">HP +0 · Stock +0 · Default</div>
+                    <div class="cpreview" id="p-visuals"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="creator.js"></script>
+</body>
+</html>

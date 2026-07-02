@@ -1,0 +1,8 @@
+{
+  "name": "Detective",
+  "hpBonus": 0,
+  "stockBonus": 0,
+  "colorScheme": "default",
+  "glyph": "@",
+  "visuals": []
+}

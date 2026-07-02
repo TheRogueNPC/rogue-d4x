@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="shortcut icon" type="image/png" href="favicon.png">
+    <style>
+        html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#000; }
+        #openfl-content { background:#000; width:100%; height:100%; }
+    </style>
+</head>
+<body>
+    <noscript>Enable JavaScript to play</noscript>
+    <div id="openfl-content"></div>
+
+    <script src="./mp3_patch.js"></script>
+    <script src="./SevenDRL.js"></script>
+
+    <script>
+        window.addEventListener("touchmove", function(e) { e.preventDefault(); }, { passive: false });
+
+        // Auto-launch game when ready
+        var attempts = 0;
+        function bootGame() {
+            attempts++;
+            if (typeof lime !== 'undefined' && lime.embed) {
+                try {
+                    lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+                } catch (e) {
+                    console.error("Boot error:", e);
+                }
+                return;
+            }
+            if (attempts < 50) {
+                setTimeout(bootGame, 100);
+            }
+        }
+        bootGame();
+    </script>
+</body>
+</html>

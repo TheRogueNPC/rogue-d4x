@@ -1,0 +1,35 @@
+{
+  "name": "@neth4ck/neth4ck",
+  "version": "1.0.4",
+  "description": "The original NetHack rogue-like game built as a WebAssembly module",
+  "main": "src/nethackShim.js",
+  "scripts": {
+    "test": "npm run build && node test/test.js",
+    "prepublish": "npm run build",
+    "clean": "rm ./build/nethack.js; rm ./build/nethack.wasm; cd NetHack && git clean -X -f; true",
+    "build:nethack:config": "cd NetHack/sys/unix && ./setup.sh hints/macOS.2020",
+    "build:nethack:lua": "cd NetHack && make fetch-lua",
+    "build:nethack": "cd NetHack && make CROSS_TO_WASM=1",
+    "build:copy": "cp NetHack/targets/wasm/nethack.js NetHack/targets/wasm/nethack.wasm ./build",
+    "build": "npm run build:nethack:config && npm run build:nethack:lua && npm run build:nethack && npm run build:copy",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "nethack",
+    "rogue",
+    "rogue-like",
+    "roguelike",
+    "dungeon",
+    "dungeons",
+    "game",
+    "rpg",
+    "dnd"
+  ],
+  "author": "Adam Powers <apowers@ato.ms>",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "eslint-plugin-jsdoc": "^30.7.7",
+    "eslint-plugin-mocha": "^8.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Phantom",
+  "hp": 3,
+  "damage": 2,
+  "state": "wandering",
+  "glyph": "?"
+}

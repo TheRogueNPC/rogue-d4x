@@ -1,0 +1,7 @@
+{
+  "name": "Golem",
+  "hp": 8,
+  "damage": 3,
+  "state": "stationary",
+  "glyph": "G"
+}

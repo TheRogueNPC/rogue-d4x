@@ -1,0 +1,24 @@
+.row {
+  padding: 0;
+  margin: 0;
+  height: 5px;
+}
+.cell {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  padding: 0;
+  margin: 0;
+}
+.cell.empty {
+  background-color: #000;
+}
+.cell.bush {
+  background-color: #008000;
+}
+.cell.grass {
+  background-color: #90ee90;
+}
+.cell.tree {
+  background-color: #006400;
+}

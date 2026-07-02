@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues - Dev Tools (Minimal Test)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#000; }
+        #openfl-content { background:#000; width:100%; height:100%; position:fixed; inset:0; }
+        #test-log { position:fixed; top:10px; left:10px; z-index:9999; background:rgba(0,0,0,0.9); color:#0f0; padding:10px; font-family:monospace; font-size:12px; border:1px solid #0f0; max-width:600px; max-height:300px; overflow-y:auto; }
+    </style>
+</head>
+<body>
+    <noscript>JavaScript required</noscript>
+    <div id="openfl-content"></div>
+    <div id="test-log"></div>
+
+    <script src="/mp3_patch.js"></script>
+    <script src="/SevenDRL.js"></script>
+
+    <script>
+    var log = document.getElementById('test-log');
+    var lines = [];
+    function L(msg) {
+        lines.push('[' + new Date().toISOString().slice(11, 23) + '] ' + msg);
+        log.innerHTML = lines.map(l => l.replace(/</g,'&lt;').replace(/>/g,'&gt;')).join('<br>');
+        log.scrollTop = log.scrollHeight;
+        console.log(msg);
+    }
+
+    L('STEP 1: Check if lime exists');
+    if (typeof lime === 'undefined') {
+        L('✗ lime is UNDEFINED');
+    } else if (typeof lime.embed === 'undefined') {
+        L('✗ lime.embed is UNDEFINED');
+    } else {
+        L('✓ lime.embed exists: ' + typeof lime.embed);
+    }
+
+    L('STEP 2: Calling lime.embed()');
+    try {
+        var result = lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+        L('✓ lime.embed() returned: ' + typeof result);
+    } catch(e) {
+        L('✗ lime.embed() threw: ' + e.message);
+    }
+
+    L('STEP 3: Checking for game classes');
+    setTimeout(function() {
+        if (typeof window.com_watabou_sevendrl_SevenDRL !== 'undefined') {
+            L('✓ Game class SevenDRL loaded');
+        } else {
+            L('✗ Game class SevenDRL NOT found');
+            L('Available classes: ' + Object.keys(window).filter(k => k.indexOf('com_watabou_') === 0).slice(0, 5).join(', '));
+        }
+    }, 500);
+    </script>
+</body>
+</html>

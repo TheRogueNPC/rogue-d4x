@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Mod Loading</title>
+    <style>
+        body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
+        #log { white-space:pre-wrap; font-size:11px; max-height:500px; overflow-y:auto; border:1px solid #0f0; padding:10px; margin-bottom:20px; }
+        button { background:#0f0; color:#000; padding:5px 15px; margin:5px; cursor:pointer; font-family:monospace; }
+        .pass { color:#0f0; } .fail { color:#f44; } .info { color:#0ff; }
+    </style>
+</head>
+<body>
+    <h2>Mod Loading Test</h2>
+    <button onclick="testRootGame()">Test Root Game (no mods)</button>
+    <button onclick="testDevToolsWithAllMods()">Test With All Mods</button>
+    <button onclick="testModsOneByOne()">Test Mods One By One</button>
+    <div id="log"></div>
+
+    <script src="/mp3_patch.js"></script>
+    <script src="/SevenDRL.js"></script>
+
+    <script>
+    var logEl = document.getElementById('log');
+    var modsToTest = [
+        "/Dev-Tools/mods/asset-fixer.js",
+        "/Dev-Tools/mods/loader.js",
+        "/Dev-Tools/mods/game.js",
+        "/Dev-Tools/mods/characters.js",
+        "/Dev-Tools/mods/scenes.js",
+        "/Dev-Tools/mods/debug.js",
+        "/Dev-Tools/mods/eventlog.js",
+        "/Dev-Tools/mods/zombies.js",
+        "/Dev-Tools/mods/rogue-api.js",
+        "/Dev-Tools/mods/char-creator.js",
+        "/Dev-Tools/mods/pause-menu.js",
+        "/Dev-Tools/mods/ability.js",
+        "/Dev-Tools/mods/ability-pickup.js",
+        "/Dev-Tools/mods/play.js",
+        "/Dev-Tools/mods/view-mode.js",
+        "/Dev-Tools/ui/dev-toolbar.js",
+        "/Dev-Tools/ui/inspector.js"
+    ];
+
+    function L(msg, type) {
+        var cls = type === 'pass' ? 'pass' : type === 'fail' ? 'fail' : 'info';
+        logEl.innerHTML += '<span class="' + cls + '">' + msg + '</span>\n';
+        logEl.scrollTop = logEl.scrollHeight;
+        console.log(msg);
+    }
+
+    function testRootGame() {
+        logEl.innerHTML = '';
+        L('[TEST] Root game (no mods)');
+        L('1. Checking lime...', window.lime && window.lime.embed ? 'pass' : 'fail');
+        L('2. Calling lime.embed()...', 'info');
+        try {
+            lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+            L('3. lime.embed() completed', 'pass');
+            setTimeout(function() {
+                var classes = Object.keys(window).filter(k => k.indexOf('com_watabou_') === 0).length;
+                L('4. Game classes on window: ' + classes, classes > 0 ? 'pass' : 'fail');
+            }, 500);
+        } catch(e) {
+            L('ERROR: ' + e.message, 'fail');
+        }
+    }
+
+    function testDevToolsWithAllMods() {
+        logEl.innerHTML = '';
+        L('[TEST] All mods then game');
+        loadModsSequential(modsToTest, function() {
+            L('All mods loaded, calling lime.embed()...', 'info');
+            try {
+                lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+                L('lime.embed() completed', 'pass');
+                setTimeout(function() {
+                    var classes = Object.keys(window).filter(k => k.indexOf('com_watabou_') === 0).length;
+                    L('Game classes on window: ' + classes, classes > 0 ? 'pass' : 'fail');
+                }, 500);
+            } catch(e) {
+                L('ERROR in lime.embed(): ' + e.message, 'fail');
+            }
+        });
+    }
+
+    function testModsOneByOne() {
+        logEl.innerHTML = '';
+        L('[TEST] Load mods one by one');
+        testNextMod(0);
+    }
+
+    function testNextMod(idx) {
+        if (idx >= modsToTest.length) {
+            L('\n[DONE] All mods loaded', 'pass');
+            return;
+        }
+        var mod = modsToTest[idx];
+        L('[' + (idx+1) + '/' + modsToTest.length + '] Loading ' + mod.split('/').pop() + '...', 'info');
+        var el = document.createElement('script');
+        el.src = mod + '?v=' + Date.now();
+        el.onload = function() {
+            L('  ✓ Loaded', 'pass');
+            testNextMod(idx + 1);
+        };
+        el.onerror = function() {
+            L('  ✗ FAILED (404 or syntax error)', 'fail');
+            testNextMod(idx + 1);
+        };
+        document.head.appendChild(el);
+    }
+
+    function loadModsSequential(mods, callback) {
+        var idx = 0;
+        function next() {
+            if (idx >= mods.length) { callback(); return; }
+            var src = mods[idx++];
+            L('Loading ' + src.split('/').pop() + '...', 'info');
+            var el = document.createElement('script');
+            el.src = src + '?v=' + Date.now();
+            el.onload = function() { L('  ✓', 'pass'); next(); };
+            el.onerror = function() { L('  ✗ FAILED', 'fail'); next(); };
+            document.head.appendChild(el);
+        }
+        next();
+    }
+    </script>
+</body>
+</html>

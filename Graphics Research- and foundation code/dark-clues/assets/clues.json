@@ -1,0 +1,49 @@
+{
+	"clue" : [
+		"a {revolver|handgun} loaded with silver bullets",
+		"a bloodstained altar",
+		"an idol of an {ancient|unknown} god",
+		"an empty bottle of sleeping pills",
+		"a concealed cache of drugs",
+		"{blueprints for|a map of} a set of underground tunnels",
+		"a bottle of {whiskey|rum|gin} with a {diamond ring|key} at the bottom of it",
+		"a stack of overdue bills",
+		"a pile of receipts suggesting extravagant expenditures",
+		"an infestation of crawling insects",
+		"a flower that leaks blood when touched",
+		"a {hastily written }love letter",
+		"a shattered crystal ball",
+		"a {wristwatch|clock} set to the wrong time",
+		"a sequence of numbers written on a {slip|piece} of paper",
+		"a briefcase full of cash",
+		"a {heart|brain} in a jar",
+		"a pair of gloves covered in {blood|gunshot residue}",
+		"a bullet hole in a wall",
+		"a {severed|mummified} hand covered in runes",
+		"a piece of rope, stained with dried blood",
+		"{half-melted }candles with human hair inside",
+		"a severed head of a {lamb|goat|pig|sheep}",
+		"a suicide note",
+		"an antique doll with its head broken open",
+		"a familiar face on ancient photograph",
+		"photographs of prehistoric paintings",
+		"an odd chemical smell",
+		"a confined crawl space",
+		"the word \"{FAKER|MURDERER|TRAITOR}\" {spray-}painted onto a wall",
+		"a tarot spread : #tarot#, #tarot# and #tarot#",
+		"#diary#"
+	],
+
+	"tarot" : ["0.28?-#major_arcana#", "0.72?-#minor_arcana#"],
+	"major_arcana" : [
+		"the Fool", "the Magician", "the High Priestess", "the Empress", "the Emperor", "the Hierophant", "the Lovers", "the Chariot", "Strength", "the Hermit", 
+		"Wheel of Fortune", "Justice", "the Hanged Man", "Death", "Temperance", "the Devil", "the Tower", "the Star", "the Moon", "the Sun", "Judgement", "the World"],
+	"minor_arcana" : "#order# of #suit#",
+	"order" : ["Ace", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"],
+	"suit" : ["Pentacles", "Cups", "Swords", "Wands"],
+
+	"diary" : [
+		"a diary with the last {page|few pages} ripped",
+		"a diary containing evidence of a {forbidden love|murder}"
+	]
+}

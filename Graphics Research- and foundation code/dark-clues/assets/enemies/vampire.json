@@ -1,0 +1,7 @@
+{
+  "name": "Vampire",
+  "hp": 5,
+  "damage": 4,
+  "state": "chasing",
+  "glyph": "V"
+}

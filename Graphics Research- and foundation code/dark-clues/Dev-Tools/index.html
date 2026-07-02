@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues - Dev Tools</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <base href="/">
+    <script>
+        window.addEventListener("touchmove", function(e) { e.preventDefault(); }, { capture: false, passive: false });
+        if (typeof window.devicePixelRatio != 'undefined' && window.devicePixelRatio > 2) {
+            var meta = document.getElementById("viewport");
+            meta.setAttribute('content', 'width=device-width, initial-scale=' + (2 / window.devicePixelRatio) + ', user-scalable=no');
+        }
+    </script>
+    <style>
+        html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#000; }
+        #openfl-content { background:#000; width:100%; height:100%; position:fixed; inset:0; }
+        #openfl-content canvas { display:block; }
+        #dev-console { position:fixed; top:10px; right:10px; z-index:9999; background:rgba(0,0,0,0.9); color:#0f0; padding:8px; font-family:monospace; font-size:11px; border:1px solid #0f0; width:420px; max-height:320px; flex-direction:column; display:flex; }
+        #dev-console.hidden { display:none; }
+        #dev-console .header { color:#0ff; border-bottom:1px solid #0ff; padding-bottom:4px; margin-bottom:4px; flex-shrink:0; }
+        #dev-console .header .toggle-all { float:right; cursor:pointer; color:#f80; }
+        #dev-log { flex:1; overflow-y:auto; max-height:250px; }
+        #dev-console .line { border-bottom:1px solid #222; padding:2px 0; word-break:break-all; }
+        #dev-console .input-row { display:flex; flex-shrink:0; }
+        #dev-console .prompt { color:#0f0; }
+        #dev-console input { flex:1; background:#000; color:#0f0; border:1px solid #0f0; font-family:monospace; font-size:11px; outline:none; }
+        @font-face {
+            font-family:'Share Tech Regular';
+            src: url('/assets/ShareTech-Regular.eot?#iefix') format('embedded-opentype'),
+                 url('/assets/ShareTech-Regular.woff') format('woff'),
+                 url('/assets/ShareTech-Regular.ttf') format('truetype'),
+                 url('/assets/ShareTech-Regular.svg#Share%20Tech%20Regular') format('svg');
+            font-weight:normal; font-style:normal;
+        }
+    </style>
+</head>
+<body>
+    <noscript>This webpage makes extensive use of JavaScript. Please enable JavaScript in your web browser to view this page.</noscript>
+    <div id="openfl-content"></div>
+
+    <!-- Dev Console (visible by default for boot diagnostics) -->
+    <div id="dev-console">
+        <div class="header">
+            Dark Clues Dev Console [F12 to toggle]
+            <span class="toggle-all" onclick="DBG && DBG.toggleAll && DBG.toggleAll()">[toggle mods]</span>
+        </div>
+        <div id="dev-log"></div>
+        <div class="input-row">
+            <span class="prompt">&gt;&nbsp;</span>
+            <input id="dev-input" type="text" placeholder="JS command (d.help())...">
+        </div>
+    </div>
+
+    <!-- Layer 1: Compiled game bundle -->
+    <script src="/mp3_patch.js"></script>
+    <script src="/SevenDRL.js"></script>
+
+    <!-- Layer 2: Manifest (defines load order) -->
+    <script src="/Dev-Tools/mods/manifest.js?v=DEVTOOLS"></script>
+
+    <!-- Layer 3: Dynamic mod loader -->
+    <script>
+    // ── Error display overlay ──
+    function showError(msg) {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);color:#f44;font-family:monospace;font-size:14px;padding:20px;z-index:99999;overflow-y:auto;';
+        overlay.innerHTML = '<div style="color:#f80;margin-bottom:20px;"><h2>ERROR</h2></div><pre>' + msg.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>';
+        document.body.appendChild(overlay);
+        console.error('DEV-TOOLS ERROR: ' + msg);
+    }
+    window.onerror = function(msg, url, line) {
+        showError('JavaScript Error:\n' + msg + '\n\nFile: ' + url + '\nLine: ' + line);
+    };
+
+    // ── Inline boot: init console, load mods from manifest, launch game ──
+    window.bootTime = Date.now();
+    window.__devToolsEnabled = true;
+
+    function initConsole() {
+        var panel = document.getElementById('dev-console');
+        var logEl = document.getElementById('dev-log');
+        var input = document.getElementById('dev-input');
+
+        window.devLog = function() {
+            var parts = [];
+            for (var i = 0; i < arguments.length; i++) {
+                var a = arguments[i];
+                if (a === null) parts.push('null');
+                else if (a === undefined) parts.push('undefined');
+                else if (typeof a === 'object') { try { parts.push(JSON.stringify(a)); } catch(e) { parts.push(String(a)); } }
+                else parts.push(a);
+            }
+            var line = document.createElement('div');
+            line.className = 'line';
+            line.textContent = parts.join(' ');
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log.apply(console, arguments);
+        };
+        window.devClear = function() { logEl.innerHTML = ''; };
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                var isHidden = panel.classList.contains('hidden');
+                if (isHidden) {
+                    panel.classList.remove('hidden');
+                    input.focus();
+                } else {
+                    panel.classList.add('hidden');
+                }
+            }
+        });
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter') return;
+            if (!window.__devToolsEnabled) {
+                devLog('Dev tools disabled — enable in Options panel');
+                input.value = '';
+                return;
+            }
+            var cmd = input.value;
+            input.value = '';
+            devLog('> ' + cmd);
+            try {
+                var result = eval(cmd);
+                devLog('=> ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : result));
+            } catch(e) {
+                devLog('Error: ' + e.message);
+            }
+        });
+
+        devLog('Dev Console ready [F12]');
+    }
+
+    function loadModsFromManifest(callback) {
+        if (!callback) callback = function() {};
+        var mods = window.MOD_MANIFEST || [];
+        console.log('loadModsFromManifest: ' + mods.length + ' mods to load');
+        console.log('Mods:', mods.map(m => m.split('/').pop()).join(', '));
+        devLog('loadModsFromManifest: ' + mods.length + ' mods');
+
+        if (mods.length === 0) {
+            console.log('No mods to load, calling callback immediately');
+            devLog('No mods to load, calling callback immediately');
+            setTimeout(callback, 0);
+            return;
+        }
+
+        var progress = document.createElement('div');
+        progress.id = 'mod-progress';
+        progress.style.cssText = 'position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.8);color:#0f0;padding:10px;font-family:monospace;font-size:12px;border:1px solid #0f0;z-index:9997;max-width:500px;max-height:200px;overflow-y:auto;';
+        progress.innerHTML = 'Loading mods: 0/' + mods.length;
+        document.body.appendChild(progress);
+
+        var loaded = 0;
+        var failed = [];
+        var startTime = Date.now();
+
+        function onModLoaded(modName, isError) {
+            if (isError) {
+                failed.push(modName);
+                console.warn('✗ FAILED: ' + modName);
+                devLog('  ✗ ' + modName);
+            } else {
+                loaded++;
+                var elapsed = Date.now() - startTime;
+                console.log('✓ ' + modName + ' [' + loaded + '/' + mods.length + ', ' + elapsed + 'ms]');
+                devLog('  ✓ ' + modName + ' [' + loaded + '/' + mods.length + ']');
+            }
+            progress.innerHTML = 'Loaded: ' + loaded + '/' + mods.length + ' (Failed: ' + failed.length + ')';
+
+            if ((loaded + failed.length) === mods.length) {
+                var elapsed = Date.now() - startTime;
+                console.log('All mods done loading in ' + elapsed + 'ms (' + loaded + ' success, ' + failed.length + ' failed)');
+                devLog('All mods done loading (' + loaded + ' success, ' + failed.length + ' failed)');
+                if (failed.length > 0) {
+                    var msg = 'Failed mods: ' + failed.join(', ');
+                    console.error(msg);
+                    showError(msg);
+                }
+                progress.innerHTML = 'Ready. Initializing game...';
+                setTimeout(callback, 50);
+            }
+        }
+
+        // Load all mods in parallel (not sequential)
+        console.log('Starting parallel mod load...');
+        for (var i = 0; i < mods.length; i++) {
+            (function(src, modName) {
+                var url = src + (src.indexOf('?') === -1 ? '?v=' + Date.now() : '');
+                console.log('  Loading: ' + modName + ' from ' + url);
+                var el = document.createElement('script');
+                el.src = url;
+                // Without this, dynamically-inserted scripts execute as soon as each
+                // finishes downloading (race), not in manifest order — so loader.js
+                // (defines window.ModLoader) could run after mods that depend on it.
+                // async=false makes browsers still fetch in parallel but execute in
+                // insertion order once each is ready (per HTML5 spec).
+                el.async = false;
+                el.onerror = function() {
+                    console.warn('Script onerror for: ' + modName);
+                    onModLoaded(modName, true);
+                };
+                el.onload = function() {
+                    console.log('Script onload for: ' + modName);
+                    onModLoaded(modName, false);
+                };
+                document.body.appendChild(el);
+            })(mods[i], mods[i].split('/').pop());
+        }
+    }
+
+    // Boot sequence:
+    console.log('%c=== DEV-TOOLS BOOT START ===', 'color:#0f0;font-weight:bold');
+    console.log('STEP 1: Initializing console...');
+    initConsole();
+    console.log('✓ Console initialized, devLog ready');
+
+    // Check that SevenDRL.js loaded (exposes window.lime with .embed)
+    console.log('STEP 2: Checking if SevenDRL.js loaded...');
+    console.log('  lime:', typeof lime, lime ? 'FOUND' : 'MISSING');
+    console.log('  lime.embed:', typeof lime?.embed, (typeof lime?.embed === 'function') ? 'FOUND' : 'MISSING');
+
+    if (typeof lime === 'undefined' || typeof lime.embed !== 'function') {
+        var msg = 'ERROR: SevenDRL.js not loaded.\n\n' +
+            '1. Run: dark-clues\\start-devtools.bat\n' +
+            '2. Wait for browser to open at:\n' +
+            '   http://localhost:8080/Dev-Tools/index.html\n' +
+            '3. DO NOT double-click index.html directly';
+        devLog(msg);
+        showError(msg);
+        document.getElementById('openfl-content').innerHTML =
+            '<div style="color:#f44;padding:40px;font-family:monospace;font-size:18px;">' +
+            '<h2>SevenDRL.js not loaded</h2>' +
+            '<p style="color:#f80;">Do NOT open index.html directly (file://).</p>' +
+            '<p>Run <b style="color:#0f0;">dark-clues\\start-devtools.bat</b></p>' +
+            '<p>Then open <b style="color:#0f0;">http://localhost:8080/Dev-Tools/index.html</b></p>' +
+            '<hr style="border-color:#333;">' +
+            '<p style="font-size:14px;color:#888;">(Or run: npx http-server dark-clues -p 8080 --cors)</p>' +
+            '</div>';
+        throw new Error('SevenDRL.js not loaded');
+    }
+    console.log('✓ SevenDRL.js loaded successfully');
+
+    console.log('STEP 3: Loading mods from manifest...');
+    console.log('  MOD_MANIFEST:', window.MOD_MANIFEST ? window.MOD_MANIFEST.length + ' mods' : 'UNDEFINED');
+
+    loadModsFromManifest(function() {
+        var elapsed = Date.now() - window.bootTime;
+        console.log('STEP 4: All mods loaded (' + elapsed + 'ms)');
+        devLog('► Mods loaded in ' + elapsed + 'ms');
+        var progress = document.getElementById('mod-progress');
+        if (progress) progress.innerHTML = 'Mods loaded (' + elapsed + 'ms) — calling lime.embed()...';
+
+        // ── Pre-flight checks before wrapping lime.embed ──
+        console.log('STEP 5: Pre-flight checks...');
+        console.log('  lime:', typeof lime);
+        console.log('  lime.embed:', typeof lime?.embed);
+        console.log('  ModLoader:', typeof window.ModLoader);
+
+        if (typeof lime === 'undefined') {
+            var err = 'FATAL: lime is undefined after loading mods!\nSevenDRL.js may have failed.';
+            console.error(err);
+            showError(err);
+            devLog(err);
+            return;
+        }
+        if (typeof lime.embed !== 'function') {
+            var err = 'FATAL: lime.embed is not a function!\nSevenDRL.js corruption?';
+            console.error(err);
+            showError(err);
+            devLog(err);
+            return;
+        }
+        if (typeof ModLoader === 'undefined') {
+            var err = 'FATAL: ModLoader not defined!\nDev-Tools/mods/loader.js failed to load or execute.\nCheck Network tab in browser DevTools.';
+            console.error(err);
+            showError(err);
+            devLog(err);
+            return;
+        }
+        console.log('✓ Pre-flight checks passed');
+        devLog('► Pre-flight OK: lime, lime.embed, ModLoader all defined');
+
+        // ── Apply mod hooks immediately after lime.embed exports classes ──
+        var origEmbed = lime.embed;
+        lime.embed = function(name) {
+            try {
+                devLog('► lime.embed("' + name + '") starting game initialization...');
+                var result = origEmbed.apply(this, arguments);
+                devLog('► lime.embed returned: ' + typeof result);
+
+                // All classes now on window — flush mod patches synchronously
+                try {
+                    ModLoader.flush();
+                    if (ModLoader.patches.length === 0) {
+                        ModLoader.ready = true;
+                        devLog('✓ All patches applied');
+                    } else {
+                        devLog('⚠ ' + ModLoader.patches.length + ' patches still pending');
+                    }
+                } catch(flushErr) {
+                    showError('ERROR in ModLoader.flush():\n' + flushErr.message);
+                    return;
+                }
+
+                devLog('✓ Game initialized — ModLoader ready');
+            } catch(e) {
+                showError('ERROR in lime.embed:\n' + e.message + '\n\n' + (e.stack || 'no stack'));
+                throw e;
+            }
+        };
+
+        // ── Poll for game globals (set by proceed hook on first click) ──
+        (function pollGlobals() {
+            var attempts = 0;
+            var poll = setInterval(function() {
+                attempts++;
+                if (window.sevendrl) {
+                    clearInterval(poll);
+                    if (!window.hero) window.hero = window.sevendrl.hero;
+                    devLog('Game ready — sevendrl, hero, DBG.* available');
+                    return;
+                }
+                if (attempts === 1) {
+                    devLog('%c>>> CLICK the game canvas to activate dev tools <<<', 'color:#ff0;font-weight:bold');
+                }
+                if (attempts > 30) {
+                    clearInterval(poll);
+                    devLog('Not detected. Click the game canvas, or type: DBG.findGame()');
+                }
+            }, 500);
+        })();
+
+        // ── Launch game ──
+        console.log('STEP 6: Calling lime.embed()...');
+        devLog('► Launching game with lime.embed()...');
+        var launchTimeout = setTimeout(function() {
+            var msg = 'TIMEOUT: lime.embed() took >5 seconds. Game may have hung.';
+            console.error(msg);
+            showError(msg);
+            devLog(msg);
+        }, 5000);
+
+        try {
+            console.log('  Calling lime.embed("SevenDRL", "openfl-content", ...)');
+            var result = lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+            clearTimeout(launchTimeout);
+            console.log('✓ lime.embed() completed, returned:', typeof result);
+            devLog('✓ lime.embed() completed: ' + typeof result);
+        } catch(e) {
+            clearTimeout(launchTimeout);
+            console.error('lime.embed() threw error:', e.message);
+            console.error('Stack:', e.stack);
+            showError('lime.embed() threw error:\n' + e.message + '\n\nStack:\n' + (e.stack || 'no stack'));
+            devLog('✗ lime.embed() error: ' + e.message);
+        }
+
+        // ── Verify game initialized, retrying since class export can lag lime.embed() ──
+        console.log('STEP 7: Verifying game classes...');
+        (function verifyGameClasses(attempt) {
+            var gameClasses = Object.keys(window).filter(k => k.indexOf('com_watabou_') === 0);
+            if (gameClasses.length > 0) {
+                console.log('✓ Game classes loaded successfully');
+                devLog('✓ Game classes found: ' + gameClasses.length);
+                console.log('  Sample classes:', gameClasses.slice(0, 5));
+                return;
+            }
+            if (attempt < 10) {
+                setTimeout(function() { verifyGameClasses(attempt + 1); }, 500);
+                return;
+            }
+            var msg = 'CRITICAL: No game classes on window\nlime.embed() executed but did not export game code.';
+            console.error(msg);
+            showError(msg);
+            devLog(msg);
+        })(0);
+
+        console.log('%c=== DEV-TOOLS BOOT COMPLETE ===', 'color:#0f0;font-weight:bold');
+        console.log('Game should now be rendering. Check canvas for output.');
+    });
+    </script>
+</body>
+</html>

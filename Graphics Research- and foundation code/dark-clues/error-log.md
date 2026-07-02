@@ -1,0 +1,118 @@
+# Error Log / Preflight — 2026-06-22 14:04
+
+_Checked 79 files with `node --check`._
+
+## Errors
+- `Dev-Tools/level-creator/creator.js` — J:\BKU\New folder\dark-clues\Dev-Tools\level-creator\creator.js:859
+- `Dev-Tools/level-creator/creator.js` —         if (!room || state.activeRoomId &lt; 0) { panel.style.display = 'none'; return; }
+- `Dev-Tools/level-creator/creator.js` —                                            ^
+- `Dev-Tools/level-creator/creator.js` — 
+- `Dev-Tools/level-creator/creator.js` — SyntaxError: Unexpected token ';'
+- `Dev-Tools/level-creator/creator.js` —     at wrapSafe (node:internal/modules/cjs/loader:1735:18)
+- `index.js` — (node:71260) Warning: Failed to load the ES module: J:\BKU\New folder\dark-clues\index.js. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+- `index.js` — (Use `node --trace-warnings ...` to show where the warning was created)
+- `index.js` — J:\BKU\New folder\dark-clues\index.js:7
+- `index.js` — import "./runtime/base.js";
+- `index.js` — ^^^^^^
+- `index.js` — 
+- `modules/core/characters.js` — J:\BKU\New folder\dark-clues\modules\core\characters.js:407
+- `modules/core/characters.js` — 	,act: function() {
+- `modules/core/characters.js` — 	^
+- `modules/core/characters.js` — 
+- `modules/core/characters.js` — SyntaxError: Unexpected token ','
+- `modules/core/characters.js` —     at wrapSafe (node:internal/modules/cjs/loader:1735:18)
+- `modules/core/states.js` — J:\BKU\New folder\dark-clues\modules\core\states.js:267
+- `modules/core/states.js` — 	,aggro: function() {
+- `modules/core/states.js` — 	^
+- `modules/core/states.js` — 
+- `modules/core/states.js` — SyntaxError: Unexpected token ','
+- `modules/core/states.js` —     at wrapSafe (node:internal/modules/cjs/loader:1735:18)
+- `modules/index.js` — (node:81656) Warning: Failed to load the ES module: J:\BKU\New folder\dark-clues\modules\index.js. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+- `modules/index.js` — (Use `node --trace-warnings ...` to show where the warning was created)
+- `modules/index.js` — J:\BKU\New folder\dark-clues\modules\index.js:10
+- `modules/index.js` — import "./runtime/base.js";
+- `modules/index.js` — ^^^^^^
+- `modules/index.js` — 
+- `modules/watabou/processes.js` — J:\BKU\New folder\dark-clues\modules\watabou\processes.js:21
+- `modules/watabou/processes.js` —  *   var tw = Tweener.run(1.0, function(p) { /* p: 0→1 */ });
+- `modules/watabou/processes.js` —                                                           ^
+- `modules/watabou/processes.js` — 
+- `modules/watabou/processes.js` — SyntaxError: Unexpected token '}'
+- `modules/watabou/processes.js` —     at wrapSafe (node:internal/modules/cjs/loader:1735:18)
+
+## Warnings
+- `runtime/base.js` — large file (2423409 bytes)
+- `SevenDRL.js` — large file (2610761 bytes)
+
+## OK files
+- analyze-bundle.js
+- Dev-Tools/char-creator/creator.js
+- Dev-Tools/mods/ability-pickup.js
+- Dev-Tools/mods/ability.js
+- Dev-Tools/mods/add-card.js
+- Dev-Tools/mods/add-scene.js
+- Dev-Tools/mods/add-sound.js
+- Dev-Tools/mods/add_mob_phantom.js
+- Dev-Tools/mods/asset-fixer.js
+- Dev-Tools/mods/change-clues.js
+- Dev-Tools/mods/char-creator.js
+- Dev-Tools/mods/characters.js
+- Dev-Tools/mods/debug.js
+- Dev-Tools/mods/eventlog.js
+- Dev-Tools/mods/game.js
+- Dev-Tools/mods/loader.js
+- Dev-Tools/mods/manifest.js
+- Dev-Tools/mods/pause-menu.js
+- Dev-Tools/mods/play.js
+- Dev-Tools/mods/retheme.js
+- Dev-Tools/mods/rogue-api.js
+- Dev-Tools/mods/scenes.js
+- Dev-Tools/mods/view-mode.js
+- Dev-Tools/mods/zombies.js
+- Dev-Tools/ui/dev-toolbar.js
+- Dev-Tools/ui/inspector.js
+- extract-seven-drl.js
+- Layout_System.js
+- mods/add-card.js
+- mods/add-scene.js
+- mods/add-sound.js
+- mods/add_mob_phantom.js
+- mods/change-clues.js
+- mods/characters.js
+- mods/debug.js
+- mods/game.js
+- mods/loader.js
+- mods/manifest.js
+- mods/retheme.js
+- mods/scenes.js
+- modules/core/actions.js
+- modules/core/audio.js
+- modules/core/game.js
+- modules/core/pathfinding.js
+- modules/core/scenes.js
+- modules/core/style.js
+- modules/core/visuals.js
+- modules/tracery/tracery.js
+- modules/watabou/engine.js
+- modules/watabou/geom.js
+- modules/watabou/utils.js
+- mp3_patch.js
+- node_modules/acorn/dist/acorn.js
+- node_modules/acorn/dist/bin.js
+- node_modules/acorn-walk/dist/walk.js
+- node_modules/eslint-scope/lib/assert.js
+- node_modules/eslint-scope/lib/definition.js
+- node_modules/eslint-scope/lib/index.js
+- node_modules/eslint-scope/lib/pattern-visitor.js
+- node_modules/eslint-scope/lib/reference.js
+- node_modules/eslint-scope/lib/referencer.js
+- node_modules/eslint-scope/lib/scope-manager.js
+- node_modules/eslint-scope/lib/scope.js
+- node_modules/eslint-scope/lib/variable.js
+- node_modules/esrecurse/esrecurse.js
+- node_modules/esrecurse/gulpfile.babel.js
+- node_modules/estraverse/estraverse.js
+- node_modules/estraverse/gulpfile.js
+- ui/dev-toolbar.js
+- ui/inspector.js
+- verify-modules.js

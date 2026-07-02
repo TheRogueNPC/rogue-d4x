@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dark Clues - Module Dev (Import Map)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="shortcut icon" type="image/png" href="../favicon.png">
+    <script>
+        window.addEventListener("touchmove", function(e) { e.preventDefault(); }, { capture: false, passive: false });
+    </script>
+    <style>
+        html, body { margin:0; padding:0; height:100%; overflow:hidden; }
+        #openfl-content { background:#000; width:100%; height:100%; }
+        @font-face {
+            font-family:'Share Tech Regular';
+            src: url('../Assets/ShareTech-Regular.eot?#iefix') format('embedded-opentype'),
+                 url('../Assets/ShareTech-Regular.woff') format('woff'),
+                 url('../Assets/ShareTech-Regular.ttf') format('truetype'),
+                 url('../Assets/ShareTech-Regular.svg#Share%20Tech%20Regular') format('svg');
+            font-weight:normal; font-style:normal;
+        }
+    </style>
+</head>
+<body>
+    <noscript>Enable JavaScript</noscript>
+    <div id="openfl-content"></div>
+
+    <!--
+    Import Map: redirects the broken relative paths in modules/index.js
+    to the actual file locations.
+
+    modules/index.js says:           Actual location:
+      ./runtime/base.js              ../runtime/base.js
+      ./modules/watabou/geom.js      ../modules/watabou/geom.js
+      etc.
+
+    The import map keys match the specifier as written in modules/index.js.
+    Values are resolved relative to THIS document (Dev-Tools/).
+    -->
+    <script type="importmap">
+    {
+        "imports": {
+            "./runtime/base.js": "../runtime/base.js",
+            "./modules/watabou/geom.js": "../modules/watabou/geom.js",
+            "./modules/watabou/utils.js": "../modules/watabou/utils.js",
+            "./modules/watabou/processes.js": "../modules/watabou/processes.js",
+            "./modules/watabou/engine.js": "../modules/watabou/engine.js",
+            "./modules/tracery/tracery.js": "../modules/tracery/tracery.js",
+            "./modules/core/style.js": "../modules/core/style.js",
+            "./modules/core/audio.js": "../modules/core/audio.js",
+            "./modules/core/visuals.js": "../modules/core/visuals.js",
+            "./modules/core/states.js": "../modules/core/states.js",
+            "./modules/core/pathfinding.js": "../modules/core/pathfinding.js",
+
+            "./modules/core/game.js": "./mods-importmap/game.js",
+            "./modules/core/characters.js": "./mods-importmap/characters.js",
+            "./modules/core/actions.js": "../modules/core/actions.js",
+            "./modules/core/scenes.js": "./mods-importmap/scenes.js"
+        }
+    }
+    </script>
+
+    <!-- Load Haxe/OpenFL runtime first (as global script, not ES module) -->
+    <script src="../runtime/base.js"></script>
+    <script src="../mp3_patch.js"></script>
+
+    <script type="module">
+        // Load module entry point — import map fixes relative paths
+        // This loads all the game modules in the correct order
+        import "../modules/index.js";
+
+        // Wait for lime to be available (loaded by runtime/base.js)
+        // then initialize the game
+        function startGame() {
+            if (typeof lime !== 'undefined') {
+                try {
+                    lime.embed("SevenDRL", "openfl-content", 0, 0, { parameters: {} });
+                    console.log("✓ Game initialized with lime.embed()");
+                } catch (e) {
+                    console.error("× Failed to initialize game:", e);
+                }
+                return;
+            }
+            // Try again if lime not ready yet
+            setTimeout(startGame, 100);
+        }
+
+        // Start game when modules are loaded
+        setTimeout(startGame, 500);
+
+        // Dev helpers
+        window.devLog = function() { console.log.apply(console, ['[Dev]'].concat([].slice.call(arguments))); };
+        window.devClear = function() { console.clear(); };
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>dark-clues diag</title>
+</head>
+<body>
+  <pre id="out">running diagnostics...</pre>
+  <script type="text/javascript" src="./runtime/base.js"></script>
+  <script>
+    var out = document.getElementById('out');
+    function log() { out.textContent += Array.prototype.slice.call(arguments).join(' ') + '\n'; }
+
+    setTimeout(function () {
+      try {
+        log('DOC', 'ready=' + (document.readyState));
+        log('SVR', location.href);
+        var base = document.createElement('script');
+        base.src = './SevenDRL.js';
+        base.onload = function () {
+          try {
+            log('JS_LOAD', 'SevenDRL.js loaded');
+            log('JS_CHECK', typeof com_watabou_sevendrl_SevenDRL === 'function' ? 'SevenDRL_class_ok' : 'SevenDRL_class_missing');
+          } catch (e) { log('JS_ERR', e && e.message ? e.message : String(e)); }
+        };
+        base.onerror = function () { log('JS_LOAD_ERR', 'SevenDRL failed to load'); };
+        document.body.appendChild(base);
+      } catch (e) {
+        log('FATAL', e && e.message ? e.message : String(e));
+      }
+    }, 0);
+  </script>
+</body>
+</html>

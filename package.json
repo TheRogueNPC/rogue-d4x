@@ -9,7 +9,10 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "dev:tauri": "vite dev --config vite.config.tauri.ts",
+    "build:tauri": "vite build --config vite.config.tauri.ts",
+    "bootstrap:tauri": "node src-tauri/scripts/bootstrap-tauri.ts"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -18,6 +21,10 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.8.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "vite": "^6.0.5",
+    "fast-glob": "^3.3.2",
+    "local-pkg": "^0.5.1",
+    "@tauri-apps/cli": "^2.1.0"
   }
 }

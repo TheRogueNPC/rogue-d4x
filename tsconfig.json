@@ -17,6 +17,7 @@
   "include": [
     "src/**/*.ts",
     "src-tauri/**/*.ts",
+    "src/frontend/**/*.ts",
     "tests/**/*.ts",
     "vitest.config.ts",
     "vite.config.tauri.ts"

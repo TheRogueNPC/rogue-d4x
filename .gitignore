@@ -1,0 +1,14 @@
+# Node / TypeScript build outputs
+node_modules/
+dist/
+coverage/
+.vitest/
+
+# Local editor/system noise
+.DS_Store
+Thumbs.db
+*.log
+
+# Environment files
+.env
+.env.*
